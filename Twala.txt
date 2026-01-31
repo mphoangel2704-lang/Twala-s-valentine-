@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Be My Valentine?</title>
+  <style>
+    :root{
+      --pink:#ff4d8d;
+      --hot:#ff2e63;
+      --light:#ffe6ef;
+      --glass: rgba(255, 255, 255, 0.22);
+      --glass-border: rgba(255,255,255,0.35);
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 20% 20%, #ffd1e1 0 25%, transparent 26%),
+        radial-gradient(circle at 80% 30%, #ffc2d6 0 18%, transparent 19%),
+        radial-gradient(circle at 50% 80%, #ffd6e6 0 22%, transparent 23%),
+        linear-gradient(135deg, #ff2e63, #ff7aa8, #ffb3cc);
+      overflow:hidden;
+    }
+
+    /* floating hearts layer */
+    .hearts{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:0;
+    }
+    .h{
+      position:absolute;
+      bottom:-40px;
+      width:18px;
+      height:18px;
+      background: rgba(255,255,255,0.75);
+      transform: rotate(45deg);
+      border-radius: 4px;
+      filter: drop-shadow(0 10px 10px rgba(0,0,0,0.12));
+      animation: floatUp linear infinite;
+    }
+    .h:before,.h:after{
+      content:"";
+      position:absolute;
+      width:18px;height:18px;
+      background: rgba(255,255,255,0.75);
+      border-radius: 50%;
+    }
+    .h:before{ left:-9px; top:0; }
+    .h:after{ top:-9px; left:0; }
+
+    @keyframes floatUp{
+      from{ transform: translateY(0) rotate(45deg); opacity:0; }
+      10%{ opacity:0.9; }
+      to{ transform: translateY(-110vh) rotate(45deg); opacity:0; }
+    }
+
+    .card{
+      width:min(560px, 92vw);
+      padding:28px 22px 22px;
+      text-align:center;
+      border-radius:22px;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 55px rgba(0,0,0,0.18);
+      position:relative;
+      z-index:1;
+    }
+
+    h1{
+      margin: 6px 0 10px;
+      font-size: clamp(28px, 4.2vw, 42px);
+      color: #fff;
+      text-shadow: 0 10px 30px rgba(0,0,0,0.22);
+      letter-spacing: 0.2px;
+    }
+
+    p{
+      margin: 0 0 16px;
+      color: rgba(255,255,255,0.92);
+      font-size: 16px;
+    }
+
+    .heartBig{
+      width: 86px;
+      height: 86px;
+      margin: 0 auto 12px;
+      background: var(--light);
+      position: relative;
+      transform: rotate(45deg);
+      border-radius: 16px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+      animation: pop 1.6s ease-in-out infinite;
+    }
+    .heartBig:before,
+    .heartBig:after{
+      content:"";
+      width: 86px;
+      height: 86px;
+      background: var(--light);
+      border-radius: 50%;
+      position:absolute;
+    }
+    .heartBig:before{ left:-43px; top:0; }
+    .heartBig:after{ top:-43px; left:0; }
+
+    @keyframes pop{
+      0%,100%{ transform: rotate(45deg) scale(1); }
+      50%{ transform: rotate(45deg) scale(1.05); }
+    }
+
+    .metaRow{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin: 10px 0 14px;
+    }
+    .pill{
+      padding:8px 12px;
+      border-radius:999px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.28);
+      color: rgba(255,255,255,0.95);
+      font-weight:700;
+      font-size: 13px;
+    }
+
+    .playground{
+      position: relative;
+      height: 165px;
+      margin-top: 10px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.14);
+      border: 1px dashed rgba(255,255,255,0.35);
+      overflow:hidden;
+    }
+
+    .btn{
+      border: none;
+      padding: 14px 22px;
+      border-radius: 999px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .12s ease, filter .12s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active{ transform: scale(0.97); }
+
+    #yesBtn{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform: translate(-50%, -50%);
+      background: #ffffff;
+      color: var(--hot);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+    }
+    #yesBtn:hover{ filter: brightness(1.03); }
+
+    #noBtn{
+      position:absolute;
+      left:50%;
+      top:78%;
+      transform: translate(-50%, -50%);
+      background: rgba(255,255,255,0.35);
+      color: #ffffff;
+      border: 1px solid rgba(255,255,255,0.55);
+      backdrop-filter: blur(6px);
+    }
+
+    .result{
+      margin-top: 14px;
+      font-size: 18px;
+      font-weight: 900;
+      color: #fff;
+      min-height: 28px;
+      text-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .footer{
+      margin-top: 10px;
+      color: rgba(255,255,255,0.88);
+      font-size: 13px;
+    }
+    .footer b{ color:#fff; }
+  </style>
+</head>
+
+<body>
+  <!-- floating hearts layer -->
+  <div class="hearts" id="hearts"></div>
+
+  <div class="card">
+    <div class="heartBig" aria-hidden="true"></div>
+
+    <h1>Linda Guletwala… will you be my Valentine? 💌</h1>
+    <p>There is only one correct answer. Choose wisely 😭💗</p>
+
+    <div class="metaRow">
+      <div class="pill" id="countdown">Countdown: …</div>
+      <div class="pill">Theme: red + pink 💘</div>
+    </div>
+
+    <div class="playground" id="box">
+      <button class="btn" id="yesBtn">Yes 💖</button>
+      <button class="btn" id="noBtn">No 🙈</button>
+    </div>
+
+    <div class="result" id="result"></div>
+    <div class="footer">From <b>Mpho</b> 💗</div>
+  </div>
+
+  <script>
+    const box = document.getElementById("box");
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const result = document.getElementById("result");
+    const countdownEl = document.getElementById("countdown");
+    const heartsEl = document.getElementById("hearts");
+
+    function moveNoButton() {
+      const boxRect = box.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      const padding = 10;
+      const maxX = boxRect.width - btnRect.width - padding;
+      const maxY = boxRect.height - btnRect.height - padding;
+
+      const x = Math.random() * (maxX - padding) + padding;
+      const y = Math.random() * (maxY - padding) + padding;
+
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+      noBtn.style.transform = "translate(0, 0)";
+    }
+
+    // Dodge interactions
+    noBtn.addEventListener("mouseenter", moveNoButton);
+    noBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      moveNoButton();
+    }, { passive: false });
+
+    box.addEventListener("mousemove", (e) => {
+      const btnRect = noBtn.getBoundingClientRect();
+      const mx = e.clientX, my = e.clientY;
+      const bx = btnRect.left + btnRect.width / 2;
+      const by = btnRect.top + btnRect.height / 2;
+      const dist = Math.hypot(mx - bx, my - by);
+      if (dist < 90) moveNoButton();
+    });
+
+    yesBtn.addEventListener("click", () => {
+      result.textContent = "YAYYYYY 😭💗 See you on Valentine’s Day!";
+      noBtn.disabled = true;
+      noBtn.style.opacity = 0.4;
+      noBtn.style.cursor = "not-allowed";
+    });
+
+    noBtn.addEventListener("click", () => {
+      result.textContent = "Nice try 😭💞 But I’ll take that as a YES.";
+    });
+
+    // Countdown to Feb 14 (uses the viewer’s local time)
+    function updateCountdown(){
+      const now = new Date();
+      const year = now.getFullYear();
+      let target = new Date(year, 1, 14, 0, 0, 0); // month is 0-based; 1 = Feb
+      if (now > target) target = new Date(year + 1, 1, 14, 0, 0, 0);
+
+      const ms = target - now;
+      const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const mins = Math.floor((totalSeconds % 3600) / 60);
+
+      countdownEl.textContent = `Countdown: ${days}d ${hours}h ${mins}m`;
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // Floating hearts generator
+    function spawnHeart(){
+      const h = document.createElement("div");
+      h.className = "h";
+      const left = Math.random() * 100; // vw
+      const duration = 6 + Math.random() * 6; // seconds
+      const size = 10 + Math.random() * 16; // px
+      const opacity = 0.55 + Math.random() * 0.35;
+
+      h.style.left = left + "vw";
+      h.style.animationDuration = duration + "s";
+      h.style.width = size + "px";
+      h.style.height = size + "px";
+      h.style.opacity = opacity;
+
+      // match pseudo elements size
+      h.style.setProperty("--s", size + "px");
+
+      heartsEl.appendChild(h);
+
+      // remove after animation
+      setTimeout(() => h.remove(), duration * 1000);
+    }
+
+    // Spawn a few right away + keep spawning
+    for (let i = 0; i < 10; i++) setTimeout(spawnHeart, i * 250);
+    setInterval(spawnHeart, 450);
+
+    // Initial position for No
+    window.addEventListener("load", () => {
+      const boxRect = box.getBoundingClientRect();
+      noBtn.style.left = (boxRect.width * 0.5) + "px";
+      noBtn.style.top = (boxRect.height * 0.78) + "px";
+      noBtn.style.transform = "translate(-50%, -50%)";
+    });
+  </script>
+</body>
+</html>
